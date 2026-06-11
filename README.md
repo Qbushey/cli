@@ -4,7 +4,7 @@ The main control script for the Caelestia dotfiles.
 
 <details><summary id="dependencies">External dependencies</summary>
 
-- [`libnotfy`](https://gitlab.gnome.org/GNOME/libnotify) - sending notifications
+- [`libnotify`](https://gitlab.gnome.org/GNOME/libnotify) - sending notifications
 - [`swappy`](https://github.com/jtheoof/swappy) - screenshot editor
 - [`grim`](https://gitlab.freedesktop.org/emersion/grim) - taking screenshots
 - [`dart-sass`](https://github.com/sass/dart-sass) - discord theming
@@ -160,6 +160,29 @@ subcommands:
     wallpaper    manage the wallpaper
     resizer      window resizer daemon
 ```
+
+### The toggle command
+
+`caelestia toggle <workspace>` toggles a special workspace, like Hyprland's `togglespecialworkspace`
+dispatcher. What it adds on top of the plain dispatcher is client management for the workspace,
+configured via the `toggles` option in `~/.config/caelestia/cli.json`:
+
+- if no configured client for the workspace is running, its `command` is spawned in the workspace
+- any windows matching a client's `match` patterns are moved into the workspace if `move` is set
+
+This means a single keybind can open the app if needed, collect stray windows into the workspace
+and toggle its visibility. If you do not need any of that, a plain `togglespecialworkspace` bind
+with an `on-created-empty` workspace rule works just as well.
+
+Each client config supports the following options:
+
+| Option            | Type             | Description                                                                                                                            |
+| ----------------- | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `enable`          | boolean          | whether this client config is active                                                                                                    |
+| `match`           | array of objects | window properties to match (properties in an object are AND-ed, objects in the array are OR-ed)                                         |
+| `command`         | array of strings | the command to spawn if no matching window exists                                                                                       |
+| `move`            | boolean          | move matching windows into the special workspace                                                                                        |
+| `spawnThenToggle` | boolean          | toggle the workspace open after spawning the command (for windows created via IPC, which ignore the `[workspace special:X]` exec rule) |
 
 ### User templates
 
